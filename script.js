@@ -1,50 +1,68 @@
-function startAnimation() {
-  const name = document.getElementById("nameInput").value;
-  const message = document.getElementById("messageInput").value;
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
-  if (!name || !message) {
-    alert("Fill everything first!");
-    return;
-  }
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-  // hide start screen
-  document.getElementById("startScreen").style.display = "none";
-  document.getElementById("mainContent").style.display = "block";
+let particles = [];
+let text = "";
+let started = false;
 
-  // set text
-  document.getElementById("topName").innerText = name;
-  document.getElementById("bottomName").innerText = name;
-
-  // start rocket
-  const rocket = document.querySelector(".rocket");
-  rocket.style.display = "block";
-  rocket.classList.add("fly");
-
-  startTextAnimation(message);
+function start() {
+  text = document.getElementById("textInput").value || "I MISS YOU";
+  document.getElementById("ui").style.display = "none";
+  started = true;
+  createTextParticles();
 }
 
-// TEXT + COLORS
-const words = [
-  { text: "I MISS YOU 💙", color: "skyblue" },
-  { text: "I LOVE YOU ❤️", color: "red" },
-  { text: "YOU MATTER 💖", color: "pink" },
-  { text: "STAY WITH ME 💜", color: "violet" },
-  { text: "FOREVER US 💛", color: "gold" }
-];
+function createTextParticles() {
+  const tempCanvas = document.createElement("canvas");
+  const tctx = tempCanvas.getContext("2d");
 
-function startTextAnimation(customMessage) {
-  let index = 0;
-  const mainText = document.getElementById("mainText");
+  tempCanvas.width = canvas.width;
+  tempCanvas.height = canvas.height;
 
-  setInterval(() => {
-    if (index === 0) {
-      mainText.innerText = customMessage;
-      mainText.style.color = "white";
-    } else {
-      mainText.innerText = words[index - 1].text;
-      mainText.style.color = words[index - 1].color;
+  tctx.fillStyle = "white";
+  tctx.font = "bold 80px Arial";
+  tctx.textAlign = "center";
+  tctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+  const imageData = tctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+  for (let y = 0; y < canvas.height; y += 6) {
+    for (let x = 0; x < canvas.width; x += 6) {
+      const index = (y * canvas.width + x) * 4;
+      if (imageData[index + 3] > 128) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height,
+          targetX: x,
+          targetY: y,
+          vx: (Math.random() - 0.5) * 10,
+          vy: Math.random() * -10,
+          size: 2
+        });
+      }
     }
-
-    index = (index + 1) % (words.length + 1);
-  }, 1500);
+  }
 }
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  ctx.fillStyle = "rgba(0,0,0,0.2)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  if (!started) return;
+
+  particles.forEach(p => {
+    // move toward text position
+    p.x += (p.targetX - p.x) * 0.05;
+    p.y += (p.targetY - p.y) * 0.05;
+
+    ctx.fillStyle = "gold";
+    ctx.fillRect(p.x, p.y, p.size, p.size);
+  });
+}
+
+animate();
