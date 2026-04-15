@@ -2,32 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>For Someone Special 💖</title>
+  <title>Firework Message 💖</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- START SCREEN -->
-  <div id="startScreen">
-    <h2>Enter Name</h2>
-    <input type="text" id="nameInput" placeholder="Name here...">
+<canvas id="canvas"></canvas>
 
-    <h2>Your Message</h2>
-    <input type="text" id="messageInput" placeholder="Type something...">
+<div id="ui">
+  <input id="nameInput" placeholder="Name">
+  <input id="textInput" placeholder="Message (e.g I MISS YOU)">
+  <button onclick="start()">Start</button>
+</div>
 
-    <button onclick="startAnimation()">Start 💌</button>
-  </div>
-
-  <!-- MAIN CONTENT -->
-  <div id="mainContent">
-    <h1 id="topName"></h1>
-    <h2 id="mainText"></h2>
-    <h3 id="bottomName"></h3>
-  </div>
-
-  <!-- ROCKET -->
-  <div class="rocket">🚀</div>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
