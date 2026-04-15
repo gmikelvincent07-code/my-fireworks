@@ -3,72 +3,90 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const targetName = prompt("Who do you miss?", "Andrea");
+const targetName = prompt("Who do you miss?", "ANDREA").toUpperCase();
 let particles = [];
 
+// 1. Function to get pixel coordinates for the text
+function getTextMatrix(text) {
+    const matrix = [];
+    ctx.font = "bold 20px monospace"; // Monospace for pixel look
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+    
+    // Scan the canvas for "lit" pixels
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    for (let y = 0; y < canvas.height; y += 6) { // 6 is the pixel size
+        for (let x = 0; x < canvas.width; x += 6) {
+            const index = (y * canvas.width + x) * 4;
+            if (imageData[index + 3] > 128) { // If pixel is not transparent
+                matrix.push({ x, y });
+            }
+        }
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    return matrix;
+}
+
+const nameCoords = getTextMatrix(targetName);
+
 class Particle {
-    constructor(x, y, color) {
-        this.x = x;
-        this.y = y;
+    constructor(startX, startY, targetX, targetY, color) {
+        this.x = startX;
+        this.y = startY;
+        this.targetX = targetX;
+        this.targetY = targetY;
         this.color = color;
-        this.velocity = {
-            x: (Math.random() - 0.5) * 8,
-            y: (Math.random() - 0.5) * 8
-        };
         this.alpha = 1;
-        this.friction = 0.95;
+        this.speed = 0.08; // How fast they snap to the name
     }
 
     draw() {
         ctx.globalAlpha = this.alpha;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
-        ctx.fill();
+        // Draw a small square for the pixel look
+        ctx.fillRect(this.x, this.y, 4, 4);
     }
 
     update() {
-        this.velocity.x *= this.friction;
-        this.velocity.y *= this.friction;
-        this.x += this.velocity.x;
-        this.y += this.velocity.y;
-        this.alpha -= 0.01;
+        // Move towards the target pixel position
+        this.x += (this.targetX - this.x) * this.speed;
+        this.y += (this.targetY - this.y) * this.speed;
+        
+        // Slowly fade out after reaching target
+        if (Math.abs(this.x - this.targetX) < 1) {
+            this.alpha -= 0.005;
+        }
     }
 }
 
-function createFirework() {
-    const x = Math.random() * canvas.width;
-    const y = Math.random() * canvas.height;
-    const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
-    for (let i = 0; i < 30; i++) {
-        particles.push(new Particle(x, y, color));
-    }
-}
+// 2. Trigger firework on CLICK
+window.addEventListener('click', (e) => {
+    const color = `hsl(${Math.random() * 360}, 80%, 60%)`;
+    
+    // Create a particle for every "pixel" in the name
+    nameCoords.forEach(coord => {
+        particles.push(new Particle(e.clientX, e.clientY, coord.x, coord.y, color));
+    });
+});
 
 function animate() {
-    requestAnimationFrame(animate);
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Text Display
-    ctx.globalAlpha = 1;
-    ctx.font = "bold 35px Arial";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "cyan";
-    ctx.fillText("I MISS YOU", canvas.width / 2, canvas.height / 2 - 20);
-    ctx.fillStyle = "magenta";
-    ctx.fillText(targetName.toUpperCase(), canvas.width / 2, canvas.height / 2 + 30);
-
     particles.forEach((p, i) => {
-        if (p.alpha > 0) {
-            p.update();
-            p.draw();
-        } else {
-            particles.splice(i, 1);
-        }
+        p.update();
+        p.draw();
+        if (p.alpha <= 0) particles.splice(i, 1);
     });
 
-    if (Math.random() < 0.05) createFirework();
+    // Add a little instruction text
+    ctx.globalAlpha = 0.5;
+    ctx.fillStyle = "white";
+    ctx.font = "12px monospace";
+    ctx.fillText("TAP ANYWHERE", canvas.width / 2, 30);
+
+    requestAnimationFrame(animate);
 }
 
 animate();
