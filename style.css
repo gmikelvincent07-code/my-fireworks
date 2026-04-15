@@ -1,73 +1,22 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  text-align: center;
-  background: radial-gradient(circle, #000000, #0a0a2a);
-  color: white;
+  background: black;
   overflow: hidden;
+  font-family: Arial;
 }
 
-/* START SCREEN */
-#startScreen {
-  margin-top: 100px;
+canvas {
+  display: block;
 }
 
-input {
+#ui {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  text-align: center;
+}
+
+input, button {
   padding: 10px;
-  margin: 10px;
-  width: 220px;
-  border-radius: 10px;
-  border: none;
-}
-
-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 10px;
-  background: pink;
-  cursor: pointer;
-}
-
-/* MAIN CONTENT */
-#mainContent {
-  display: none;
-  margin-top: 150px;
-}
-
-h1 {
-  font-size: 40px;
-}
-
-h2 {
-  font-size: 35px;
-  transition: 0.5s;
-}
-
-h3 {
-  font-size: 25px;
-}
-
-/* ROCKET */
-.rocket {
-  position: fixed;
-  bottom: -60px;
-  left: -60px;
-  font-size: 40px;
-  display: none;
-}
-
-/* ROCKET ANIMATION */
-.fly {
-  animation: fly 5s linear infinite;
-}
-
-@keyframes fly {
-  0% {
-    transform: translate(0, 0) rotate(45deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(100vw, -100vh) rotate(45deg);
-    opacity: 0;
-  }
+  margin: 5px;
 }
