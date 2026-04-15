@@ -76,7 +76,7 @@ function explode(x, y, color) {
     offscreen.height = canvas.height;
     
     offCtx.fillStyle = "white";
-    offCtx.font = "bold 25px monospace";
+    offCtx.font = "bold 50px monospace";
     offCtx.textAlign = "center";
     offCtx.fillText("I MISS YOU", x, y - 20);
     offCtx.fillText(targetName, x, y + 20);
