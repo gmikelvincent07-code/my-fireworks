@@ -14,11 +14,11 @@ class Particle {
         this.y = y;
         this.color = color;
         this.velocity = {
-            x: (Math.random() - 0.5) * 10,
-            y: (Math.random() - 0.5) * 10
+            x: (Math.random() - 0.5) * 12,
+            y: (Math.random() - 0.5) * 12
         };
         this.alpha = 1;
-        this.friction = 0.96;
+        this.friction = 0.95;
     }
 
     draw() {
@@ -36,34 +36,34 @@ class Particle {
         this.velocity.y *= this.friction;
         this.x += this.velocity.x;
         this.y += this.velocity.y;
-        this.alpha -= 0.012;
+        this.alpha -= 0.015;
     }
 }
 
 function createFirework(x, y) {
-    const colors = ['#ff0055', '#00fbff', '#ffea00', '#ffffff'];
+    const colors = ['#ff4d6d', '#00f5d4', '#fee440', '#9b5de5'];
     const color = colors[Math.floor(Math.random() * colors.length)];
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 40; i++) {
         particles.push(new Particle(x, y, color));
     }
 }
 
 function animate() {
     requestAnimationFrame(animate);
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    particles.forEach((particle, index) => {
-        if (particle.alpha > 0) {
-            particle.update();
-            particle.draw();
+    particles.forEach((p, i) => {
+        if (p.alpha > 0) {
+            p.update();
+            p.draw();
         } else {
-            particles.splice(index, 1);
+            particles.splice(i, 1);
         }
     });
 }
 
-// Mobile and Desktop listeners
+// The "Click to Work" logic
 window.addEventListener('mousedown', (e) => {
     createFirework(e.clientX, e.clientY);
     msg.style.opacity = '1';
@@ -71,8 +71,8 @@ window.addEventListener('mousedown', (e) => {
 });
 
 window.addEventListener('touchstart', (e) => {
-    const touch = e.touches[0];
-    createFirework(touch.clientX, touch.clientY);
+    const t = e.touches[0];
+    createFirework(t.clientX, t.clientY);
     msg.style.opacity = '1';
     hint.style.opacity = '0';
 });
