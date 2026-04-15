@@ -1,35 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Fireworks</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: black;
-            overflow: hidden;
-            font-family: 'Arial', sans-serif;
-        }
-        #message {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 2rem;
-            text-align: center;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-            z-index: 10;
-        }
-    </style>
+    <title>Firework Surprise</title>
 </head>
 <body>
-    <div id="message">I miss you</div>
-    <canvas id="canvas"></canvas>
+    <canvas id="fireworkCanvas"></canvas>
+    <style>
+    body { margin: 0; background: #000; overflow: hidden; }
+    canvas { display: block; background: #000; }
+    </style>
+    
     <script src="script.js"></script>
 </body>
 </html>
