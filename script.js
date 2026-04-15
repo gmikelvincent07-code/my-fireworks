@@ -1,7 +1,6 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-const msg = document.getElementById('message');
-const hint = document.getElementById('hint');
+const message = document.getElementById('message');
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -13,73 +12,59 @@ class Particle {
         this.x = x;
         this.y = y;
         this.color = color;
-        this.velocity = {
-            x: (Math.random() - 0.5) * 12,
-            y: (Math.random() - 0.5) * 12
-        };
-        this.alpha = 1;
-        this.friction = 0.95;
-    }
-
-    draw() {
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-        ctx.restore();
+        this.size = Math.random() * 3 + 1;
+        this.speedX = (Math.random() - 0.5) * 10;
+        this.speedY = (Math.random() - 0.5) * 10;
+        this.opacity = 1;
     }
 
     update() {
-        this.velocity.x *= this.friction;
-        this.velocity.y *= this.friction;
-        this.x += this.velocity.x;
-        this.y += this.velocity.y;
-        this.alpha -= 0.015;
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.opacity -= 0.02;
+    }
+
+    draw() {
+        ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
     }
 }
 
 function createFirework(x, y) {
-    const colors = ['#ff4d6d', '#00f5d4', '#fee440', '#9b5de5'];
+    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
     const color = colors[Math.floor(Math.random() * colors.length)];
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 50; i++) {
         particles.push(new Particle(x, y, color));
     }
 }
 
 function animate() {
-    requestAnimationFrame(animate);
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    particles.forEach((p, i) => {
-        if (p.alpha > 0) {
-            p.update();
-            p.draw();
-        } else {
+    
+    for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+        if (particles[i].opacity <= 0) {
             particles.splice(i, 1);
+            i--;
         }
-    });
+    }
+    requestAnimationFrame(animate);
 }
 
-// The "Click to Work" logic
-window.addEventListener('mousedown', (e) => {
+window.addEventListener('click', (e) => {
     createFirework(e.clientX, e.clientY);
-    msg.style.opacity = '1';
-    hint.style.opacity = '0';
+    message.style.opacity = 1;
 });
 
 window.addEventListener('touchstart', (e) => {
-    const t = e.touches[0];
-    createFirework(t.clientX, t.clientY);
-    msg.style.opacity = '1';
-    hint.style.opacity = '0';
-});
-
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const touch = e.touches[0];
+    createFirework(touch.clientX, touch.clientY);
+    message.style.opacity = 1;
 });
 
 animate();
